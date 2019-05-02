@@ -1,0 +1,27 @@
+{
+  "name": "php-debug",
+  "version": "0.1.0",
+  "description": "PHP logs in Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hdodov/php-debug.git"
+  },
+  "keywords": [
+    "php",
+    "log",
+    "debug",
+    "trace",
+    "console",
+    "message"
+  ],
+  "author": "Hristiyan Dodov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hdodov/php-debug/issues"
+  },
+  "homepage": "https://github.com/hdodov/php-debug#readme"
+}
