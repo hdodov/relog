@@ -1,27 +1,48 @@
 <?php
 
-$node_log_file = __DIR__ . DIRECTORY_SEPARATOR . 'input.txt';
+$node_handle = fopen(__DIR__ . DIRECTORY_SEPARATOR . 'input.txt', 'a');
 
 function node_log ($input) {
-  global $node_log_file;
+  global $node_handle;
+
+  if (is_callable($input)) {
+    ob_start();
+    $input();
+    $input = ob_get_clean();
+  }
 
   if (!empty($input)) {
-    file_put_contents($node_log_file, $input . PHP_EOL, FILE_APPEND | LOCK_EX);
+    fwrite($node_handle, $input . PHP_EOL);
   }
+}
+
+function node_dump (...$args) {
+  node_log(function () use ($args) {
+    foreach ($args as $value) {
+      var_dump($value);
+    }
+  });
 }
 
 function node_trace () {
-  ob_start();
-  $trace = debug_backtrace();
+  node_log(function () {
+    $trace = [];
 
-  foreach ($trace as $key => $entry) {
-    if ($key > 0) {
-      echo PHP_EOL;
+    foreach (debug_backtrace() as $entry) {
+      if (($entry['file'] ?? null) !== __FILE__) {
+        array_push($trace, $entry);
+      }
     }
 
-    echo $key . ': ' . ($entry['file'] ?? null) . ':' . ($entry['line'] ?? null);
-  }
+    foreach ($trace as $key => $entry) {
+      echo PHP_EOL;
+      
+      $file = ($entry['file'] ?? null);
+      $line = ($entry['line'] ?? null);
 
-  $buffer = ob_get_clean();
-  node_log($buffer);
+      echo "$key: $file:$line";
+    }
+  });
 }
+
+node_log(':: ' . microtime(true) . ' ' . $_SERVER['SCRIPT_FILENAME'] . ' ::');
