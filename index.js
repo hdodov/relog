@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const fs = require('fs')
 const path = require('path')
 const file = path.join(__dirname, 'input.txt')
@@ -53,3 +55,5 @@ function flush () {
 fs.watch(file, {
   encoding: 'utf-8'
 }, flush)
+
+console.log('Watching...')

@@ -10,10 +10,16 @@ First, install the package globally:
 npm i -g php-debug
 ```
 
+To check where the package was installed, run:
+
+```
+npm ls php-debug -g
+```
+
 Then, modify your _php.ini_ to include the php-debug loader:
 
 ```ini
-auto_prepend_file=PATH_TO_GLOBAL_PHP_DEBUG\loader.php
+auto_prepend_file=PATH_TO_GLOBAL_NODE_MODULES\php-debug\loader.php
 ```
 
 For the changes to take effect, restart the PHP server.
@@ -23,7 +29,7 @@ For the changes to take effect, restart the PHP server.
 Run the logger with:
 
 ```
-npx php-debug
+php-debug
 ```
 
 In a PHP script, run:
