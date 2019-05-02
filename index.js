@@ -4,6 +4,11 @@ const fs = require('fs')
 const path = require('path')
 const file = path.join(__dirname, 'input.txt')
 
+if (process.argv[2] && process.argv[2] === '--loader') {
+  console.log(path.join(__dirname, 'loader.php'))
+  return
+}
+
 var reading = false
 var writing = false
 var scheduleClear = false
@@ -52,8 +57,14 @@ function flush () {
   }
 }
 
-fs.watch(file, {
-  encoding: 'utf-8'
-}, flush)
+fs.open(file, 'w', err => {
+  if (!err) {
+    fs.watch(file, {
+      encoding: 'utf-8'
+    }, flush)
 
-console.log('Watching...')
+    console.log('Watching...')
+  } else {
+    throw err
+  }
+});

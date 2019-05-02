@@ -10,16 +10,16 @@ First, install the package globally:
 npm i -g php-debug
 ```
 
-To check where the package was installed, run:
+Then, you have to modify _php.ini_ so that the php-debug loader is included. It provides the logging functions you use in your scripts. To get the loader file path, run:
 
 ```
-npm ls php-debug -g
+php-debug --loader
 ```
 
-Then, modify your _php.ini_ to include the php-debug loader:
+...and then add it to your _php.ini_:
 
 ```ini
-auto_prepend_file=PATH_TO_GLOBAL_NODE_MODULES\php-debug\loader.php
+auto_prepend_file=PATH_TO_PHP_DEBUG\loader.php
 ```
 
 For the changes to take effect, restart the PHP server.
@@ -32,7 +32,7 @@ Run the logger with:
 php-debug
 ```
 
-In a PHP script, run:
+In a PHP script, add:
 
 ```php
 node_log('myvalue'); // or:
