@@ -11,8 +11,13 @@ function node_log ($input) {
     $input = ob_get_clean();
   }
 
+  $log = [
+    'time' => microtime(true),
+    'data' => $input
+  ];
+
   if (!empty($input)) {
-    fwrite($node_handle, $input . PHP_EOL);
+    fwrite($node_handle, json_encode($log) . PHP_EOL);
   }
 }
 

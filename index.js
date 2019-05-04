@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-const fs = require('fs')
+const _fs = require('fs')
+const fs = _fs.promises
 const path = require('path')
 const file = path.join(__dirname, 'input.txt')
 
@@ -9,62 +10,48 @@ if (process.argv[2] && process.argv[2] === '--loader') {
   return
 }
 
-var reading = false
-var writing = false
-var scheduleClear = false
 var amountRead = 0
 
-function clear () {
-  if (!writing) {
-    writing = true
+function parse (input) {
+  var lines = input.split(/\r?\n/)
+  var logs = []
 
-    fs.writeFile(file, '', err => {
-      if (!err) {
-        writing = false
-        amountRead = 0
-      } else {
-        clear()
+  lines.forEach(line => {
+    if (line && line.length) {
+      if (line[0] === '{' && line[line.length - 1] === '}') {
+        try {
+          line = JSON.parse(line)
+        } catch (e) {}
       }
-    })
-  }
+
+      logs.push(line)
+    }
+  })
+
+  return logs
 }
 
-function flush () {
-  scheduleClear = false
+async function flush () {
+  var data = await fs.readFile(file, {
+    encoding: 'utf-8'
+  })
 
-  if (!reading && !writing) {
-    reading = true
-    scheduleClear = true
+  var input = data.substr(amountRead)
+  var logs = parse(input)
+  amountRead += input.length
 
-    fs.readFile(file, {
-      encoding: 'utf-8'
-    }, (err, data) => {
-      reading = false
-
-      if (data) {
-        var log = data.substr(amountRead)
-        process.stdout.write(log)
-        amountRead += log.length
-
-        if (scheduleClear) {
-          clear()
-          scheduleClear = false
-        } else {
-          flush()
-        }
-      }
-    })
-  }
+  logs.forEach(log => {
+    console.log(log)
+  })
 }
 
-fs.open(file, 'w', err => {
-  if (!err) {
-    fs.watch(file, {
-      encoding: 'utf-8'
-    }, flush)
+async function watch () {
+  await fs.writeFile(file, '')
+  console.log('Watching...')
 
-    console.log('Watching...')
-  } else {
-    throw err
-  }
-});
+  _fs.watch(file, {
+    encoding: 'utf-8'
+  }, flush)
+}
+
+watch()
