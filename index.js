@@ -2,69 +2,35 @@
 
 const fs = require('fs')
 const path = require('path')
-const file = path.join(__dirname, 'input.txt')
+
+const Log = require('./modules/Log')
+const queue = require('./modules/queue')
+
+const logs = path.join(__dirname, 'logs')
 
 if (process.argv[2] && process.argv[2] === '--loader') {
   console.log(path.join(__dirname, 'loader.php'))
   return
 }
 
-var reading = false
-var writing = false
-var scheduleClear = false
-var amountRead = 0
-
-function clear () {
-  if (!writing) {
-    writing = true
-
-    fs.writeFile(file, '', err => {
-      if (!err) {
-        writing = false
-        amountRead = 0
-      } else {
-        clear()
-      }
-    })
+fs.watch(logs, (type, filename) => {
+  if (type !== 'rename') {
+    return
   }
-}
 
-function flush () {
-  scheduleClear = false
+  var filepath = path.join(logs, filename)
+  var entry = queue.get(filepath)
 
-  if (!reading && !writing) {
-    reading = true
-    scheduleClear = true
-
-    fs.readFile(file, {
-      encoding: 'utf-8'
-    }, (err, data) => {
-      reading = false
-
-      if (data) {
-        var log = data.substr(amountRead)
-        process.stdout.write(log)
-        amountRead += log.length
-
-        if (scheduleClear) {
-          clear()
-          scheduleClear = false
-        } else {
-          flush()
-        }
-      }
+  if (!entry) {
+    entry = queue.add(new Log(filepath))
+    queue.flush(filepath).forEach(log => {
+      log.read().then(data => {
+        console.log(log.id, data)
+        return log.unlink()
+      })
     })
-  }
-}
-
-fs.open(file, 'w', err => {
-  if (!err) {
-    fs.watch(file, {
-      encoding: 'utf-8'
-    }, flush)
-
-    console.log('Watching...')
   } else {
-    throw err
+    // Log file was deleted.
+    queue.remove(entry.log.id)
   }
-});
+})

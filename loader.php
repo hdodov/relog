@@ -1,9 +1,9 @@
 <?php
 
-$node_handle = fopen(__DIR__ . DIRECTORY_SEPARATOR . 'input.txt', 'a');
+$node_dir = __DIR__ . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
 
 function node_log ($input) {
-  global $node_handle;
+  global $node_dir;
 
   if (is_callable($input)) {
     ob_start();
@@ -12,7 +12,9 @@ function node_log ($input) {
   }
 
   if (!empty($input)) {
-    fwrite($node_handle, $input . PHP_EOL);
+    $filename = (string)microtime(true);
+    $filename = preg_replace('/[^\d]/', '-', $filename);
+    file_put_contents($node_dir . $filename, $input);
   }
 }
 
@@ -45,4 +47,4 @@ function node_trace () {
   });
 }
 
-node_log(':: ' . microtime(true) . ' ' . $_SERVER['SCRIPT_FILENAME'] . ' ::');
+node_log(':: ' . $_SERVER['SCRIPT_FILENAME'] . ' ::');
