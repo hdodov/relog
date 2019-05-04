@@ -1,48 +1,57 @@
 var _entries = []
+var _flushedFiles = []
 
 function add (log) {
-  var entry = _entries.push({
-    flushed: false,
-    log
-  })
-
+  _entries.push(log)
   _entries.sort((a, b) => {
-    return (a.log.id < b.log.id) ? -1 : 1
+    return (a.id < b.id) ? -1 : 1
   })
-
-  return entry
-}
-
-function remove (id) {
-  _entries = _entries.filter(item => item.log.id !== id)
 }
 
 function get (filepath) {
-  return _entries.find(item => item.log.file.path === filepath)
+  return _entries.find(log => log.file.path === filepath)
 }
 
-function flush (filepath) {
+function flush () {
   var flushed = []
 
   for (var i = 0; i < _entries.length; i++) {
-    let entry = _entries[i]
+    let log = _entries[i]
 
-    if (!entry.flushed) {
-      flushed.push(entry.log)
-      entry.flushed = true
-    }
-
-    if (entry.log.file.path === filepath) {
+    if (log.consumed) {
+      flushed.push(log)
+    } else {
       break
     }
   }
 
+  flushed.forEach(log => {
+    var index = _entries.indexOf(log)
+    if (index >= 0) {
+      _entries.splice(index, 1)
+    }
+
+    _flushedFiles.push(log.file.path)
+  })
+
   return flushed
+}
+
+function isFlushed (filepath) {
+  return _flushedFiles.indexOf(filepath) >= 0
+}
+
+function removeFlushed (filepath) {
+  var index = _flushedFiles.indexOf(filepath)
+  if (index >= 0) {
+    _flushedFiles.splice(index, 1)
+  }
 }
 
 module.exports = {
   add,
-  remove,
   get,
-  flush
+  flush,
+  isFlushed,
+  removeFlushed
 }

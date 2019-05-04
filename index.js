@@ -19,18 +19,21 @@ fs.watch(logs, (type, filename) => {
   }
 
   var filepath = path.join(logs, filename)
-  var entry = queue.get(filepath)
+  if (queue.isFlushed(filepath)) {
+    queue.removeFlushed(filepath)
+    return
+  }
 
-  if (!entry) {
-    entry = queue.add(new Log(filepath))
-    queue.flush(filepath).forEach(log => {
-      log.read().then(data => {
-        console.log(log.id, data)
-        return log.unlink()
+  if (!queue.get(filepath)) {
+    var log = new Log(filepath)
+    queue.add(log)
+
+    log.consume().then(() => {
+      return queue.flush().forEach(log => {
+        console.log(log.data)
       })
+    }).catch(err => {
+      console.log(err.code)
     })
-  } else {
-    // Log file was deleted.
-    queue.remove(entry.log.id)
   }
 })
