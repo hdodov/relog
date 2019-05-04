@@ -11,27 +11,19 @@ module.exports = class {
     this.consumed = false
   }
 
-  read () {
-    return fs.readFile(this.file.path, {
-      encoding: 'utf-8',
-      flag: 'r'
-    })
-  }
-
-  unlink () {
-    return fs.unlink(this.file.path)
-  }
-
   consume () {
-    if (this.consumed) {
-      return
+    if (!this.consumed) {
+      return fs.readFile(this.file.path, {
+        encoding: 'utf-8',
+        flag: 'r'
+      }).then(data => {
+        this.data = data
+        return fs.unlink(this.file.path)
+      }).then(() => {
+        this.consumed = true
+      })
+    } else {
+      return Promise.resolve()
     }
-
-    return this.read().then(data => {
-      this.data = data
-      return this.unlink()
-    }).then(() => {
-      this.consumed = true
-    })
   }
 }

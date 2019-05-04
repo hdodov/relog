@@ -8,6 +8,13 @@ function add (log) {
   })
 }
 
+function remove (log) {
+  var index = _entries.indexOf(log)
+  if (index >= 0) {
+    _entries.splice(index, 1)
+  }
+}
+
 function get (filepath) {
   return _entries.find(log => log.file.path === filepath)
 }
@@ -26,12 +33,8 @@ function flush () {
   }
 
   flushed.forEach(log => {
-    var index = _entries.indexOf(log)
-    if (index >= 0) {
-      _entries.splice(index, 1)
-    }
-
     _flushedFiles.push(log.file.path)
+    remove(log)
   })
 
   return flushed
@@ -50,6 +53,7 @@ function removeFlushed (filepath) {
 
 module.exports = {
   add,
+  remove,
   get,
   flush,
   isFlushed,

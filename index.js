@@ -33,7 +33,7 @@ fs.watch(logs, (type, filename) => {
         console.log(log.data)
       })
     }).catch(err => {
-      console.log(err.code)
+      queue.remove(log)
     })
   }
 })
