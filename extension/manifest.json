@@ -1,0 +1,10 @@
+{
+  "manifest_version": 2,
+  "version": "1.0.0",
+  "name": "Relog",
+  "description": "Backend logs to in your DevTools console!",
+  "permissions": [
+    "<all_urls>"
+  ],
+  "devtools_page": "devtools/index.html"
+}

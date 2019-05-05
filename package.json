@@ -26,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/hdodov/php-debug/issues"
   },
-  "homepage": "https://github.com/hdodov/php-debug#readme"
+  "homepage": "https://github.com/hdodov/php-debug#readme",
+  "dependencies": {
+    "socket.io": "^2.2.0"
+  }
 }
