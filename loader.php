@@ -1,6 +1,6 @@
 <?php
 
-$node_handle = fopen(__DIR__ . DIRECTORY_SEPARATOR . 'input.txt', 'a');
+$node_handle = fopen(__DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'php.log', 'a');
 $node_id = rand();
 header('X-Relog: ' . $node_id);
 

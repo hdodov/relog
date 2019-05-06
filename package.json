@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/hdodov/php-debug#readme",
   "dependencies": {
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.2.0",
+    "yargs": "^13.2.2"
   }
 }
