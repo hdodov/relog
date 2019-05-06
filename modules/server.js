@@ -5,6 +5,13 @@ module.exports = function (observer, { port }) {
     console.log(`Listening on port ${ port }`)
   })
 
+  io.on('connect', socket => {
+    socket.emit('process_info', {
+      pid: process.pid,
+      cwd: process.cwd()
+    })
+  })
+
   var logId = 0
   observer.on('log', log => {
     if (typeof log !== 'object') {

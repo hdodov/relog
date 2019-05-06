@@ -61,7 +61,9 @@ port.onMessage.addListener(function (message) {
   var logs = message.logs
   if (logs) {
     logs.forEach(function (log) {
-      if (log.type === 'init') {
+      if (log.type === 'info') {
+        console.log('%c[relog]%c ' + log.data, 'color:#DF2059;font-weight:bold;', '')
+      } else if (log.type === 'init') {
         console.log('%c' + log.data, 'font-weight:bold;')
       } else if (log.type === 'log') {
         console.log.apply(undefined, log.data)

@@ -2,6 +2,27 @@ var socket = io('http://localhost:7904/')
 var scriptLogs = []
 var pendingLogs = []
 var activePort = null
+var activeProcess = null
+
+socket.on('process_info', function (data) {
+  activeProcess = data
+
+  postLog({
+    id: 'process_connect',
+    type: 'info',
+    data: 'Connected to process ' + activeProcess.pid + ' via port ' + socket.io.opts.port
+  })
+})
+
+socket.on('disconnect', function () {
+  postLog({
+    id: 'process_disconnect',
+    type: 'info',
+    data: 'Disconnected from process ' + activeProcess.pid
+  })
+
+  activeProcess = null
+})
 
 socket.on('log', function (log) {
   if (log.script) {
@@ -12,6 +33,7 @@ socket.on('log', function (log) {
 })
 
 function postLog (log) {
+  console.log('post log',log)
   var index = scriptLogs.indexOf(log)
   if (index >= 0) {
     scriptLogs.splice(index, 1)
