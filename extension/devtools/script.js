@@ -1,14 +1,49 @@
 var socket = io('http://localhost:3000/')
-var activePort = null
+var scriptLogs = []
 var pendingLogs = []
+var activePort = null
 
 socket.on('log', function (log) {
+  if (log.script_id) {
+    scriptLogs.push(log)
+  } else {
+    postLog(log)
+  }
+})
+
+function postLog (log) {
+  var index = scriptLogs.indexOf(log)
+  if (index >= 0) {
+    scriptLogs.splice(index, 1)
+  }
+
   pendingLogs.push(log)
   
   if (activePort) {
     activePort.postMessage({
       logs: [log]
     })
+  }
+}
+
+function flushScriptLogs (scriptId) {
+  var logs = scriptLogs.filter(function (log) {
+    return log.script_id === scriptId
+  })
+
+  logs.forEach(function (log) {
+    postLog(log)
+  })
+}
+
+chrome.devtools.network.onRequestFinished.addListener(function (request) {
+  var headers = request.response.headers
+  var relogHeader = headers.find(function (header) {
+    return header.name === 'X-Relog'
+  })
+
+  if (relogHeader) {
+    flushScriptLogs(relogHeader.value)
   }
 })
 

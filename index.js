@@ -26,6 +26,12 @@ obs.init().then(() => {
 
 var logId = 0
 obs.onLog = function (log) {
+  if (typeof log !== 'object') {
+    log = {
+      data: log
+    }
+  }
+
   log.id = logId++
   // console.log(log)
   io.emit('log', log)

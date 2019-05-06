@@ -1,9 +1,11 @@
 <?php
 
 $node_handle = fopen(__DIR__ . DIRECTORY_SEPARATOR . 'input.txt', 'a');
+$node_id = rand();
+header('X-Relog: ' . $node_id);
 
 function node_log ($input) {
-  global $node_handle;
+  global $node_handle, $node_id;
 
   if (is_callable($input)) {
     ob_start();
@@ -12,6 +14,7 @@ function node_log ($input) {
   }
 
   $log = [
+    'script_id' => (string)$node_id,
     'time' => microtime(true),
     'data' => $input
   ];
