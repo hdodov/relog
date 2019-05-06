@@ -4,7 +4,7 @@ var pendingLogs = []
 var activePort = null
 
 socket.on('log', function (log) {
-  if (log.script_id) {
+  if (log.script) {
     scriptLogs.push(log)
   } else {
     postLog(log)
@@ -28,7 +28,7 @@ function postLog (log) {
 
 function flushScriptLogs (scriptId) {
   var logs = scriptLogs.filter(function (log) {
-    return log.script_id === scriptId
+    return log.script === scriptId
   })
 
   logs.forEach(function (log) {

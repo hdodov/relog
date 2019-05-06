@@ -1,17 +1,18 @@
 {
   "name": "php-debug",
   "version": "0.1.3",
-  "description": "PHP logs in Node.js",
+  "description": "PHP logs in Node and the browser console",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "php-debug": "./index.js"
+    "relog": "./index.js",
+    "node-relog": "./index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hdodov/php-debug.git"
+    "url": "git+https://github.com/hdodov/relog.git"
   },
   "keywords": [
     "php",
@@ -19,14 +20,17 @@
     "debug",
     "trace",
     "console",
-    "message"
+    "message",
+    "chrome",
+    "devtools",
+    "inspector"
   ],
   "author": "Hristiyan Dodov",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hdodov/php-debug/issues"
+    "url": "https://github.com/hdodov/relog/issues"
   },
-  "homepage": "https://github.com/hdodov/php-debug#readme",
+  "homepage": "https://github.com/hdodov/relog#readme",
   "dependencies": {
     "socket.io": "^2.2.0",
     "yargs": "^13.2.2"

@@ -5,7 +5,7 @@ const argv = require('./modules/yargs')
 const Observer = require('./modules/Observer')
 
 if (argv.loader) {
-  console.log(path.join(__dirname, 'loader.php'))
+  console.log(path.join(__dirname, 'loaders/php/index.php'))
   return
 }
 
