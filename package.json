@@ -1,6 +1,6 @@
 {
   "name": "php-debug",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "PHP logs in Node and the browser console",
   "main": "index.js",
   "scripts": {
