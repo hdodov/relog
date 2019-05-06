@@ -44,14 +44,14 @@ function logTrace (data) {
     }
 
     output += '%c'
-    args.push('')
+    args.push('margin-bottom: 6px;')
 
     if (frame.file && frame.line) {
       output += '\n' + padMask + frame.file + ':' + frame.line
     }
 
     if (id > 0) {
-      output += '\n\n'
+      output += '\n'
     }
   })
 
