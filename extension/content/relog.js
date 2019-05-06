@@ -43,11 +43,9 @@ function logTrace (data) {
       }
     }
 
-    output += '%c'
-    args.push('margin-bottom: 6px;')
-
     if (frame.file && frame.line) {
-      output += '\n' + padMask + frame.file + ':' + frame.line
+      output += '\n%c' + padMask + frame.file + ':' + frame.line
+      args.push(id > 0 ? 'margin-bottom: 6px;' : '')
     }
 
     if (id > 0) {
