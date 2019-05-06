@@ -1,10 +1,12 @@
 const fs = require('fs')
+const EventEmitter = require('events')
 
-module.exports = class {
+module.exports = class extends EventEmitter {
   constructor (filename) {
+    super()
+
     this.filename = filename
     this.char = 0
-    this.onLog = function () {}
   }
 
   init () {
@@ -55,7 +57,7 @@ module.exports = class {
           this.char = data.length
 
           logs.forEach(log => {
-            this.onLog(log)
+            this.emit('log', log)
           })
         }
       })

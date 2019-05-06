@@ -25,7 +25,7 @@ obs.init().then(() => {
 })
 
 var logId = 0
-obs.onLog = function (log) {
+obs.on('log', log => {
   if (typeof log !== 'object') {
     log = {
       data: log
@@ -35,4 +35,4 @@ obs.onLog = function (log) {
   log.id = logId++
   // console.log(log)
   io.emit('log', log)
-}
+})
