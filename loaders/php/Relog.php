@@ -97,7 +97,7 @@ class Logger {
     $this->write('dump', $input);
   }
 
-  public function trace () {
+  public function trace ($name = null) {
     $trace = [];
 
     foreach (debug_backtrace() as $frame) {
@@ -114,6 +114,9 @@ class Logger {
       }
     }
 
-    $this->write('trace', $trace);
+    $this->write('trace', [
+      'name' => $name,
+      'frames' => $trace
+    ]);
   }
 }
