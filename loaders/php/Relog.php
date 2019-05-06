@@ -35,14 +35,47 @@ class Logger {
     return ob_get_clean();
   }
 
+  private static function serialize ($input, &$ignored = []) {
+    if (in_array($input, $ignored)) {
+      return '<Cyclic>';
+    }
+
+    if (is_object($input)) {
+      array_push($ignored, $input);
+      $input = (array)$input;      
+    }
+
+    if (is_array($input)) {
+      foreach ($input as $key => $value) {
+        $parsedKey = preg_replace('/[^A-Za-z0-9_-]/', '', $key);
+
+        if ($parsedKey !== $key) {
+          unset($input[$key]);
+          $input[$parsedKey] = $value;
+          $key = $parsedKey;
+        }
+
+        if (is_object($value) || is_array($value)) {
+          $input[$key] = self::serialize($value, $ignored);
+        }
+      }
+    }
+
+    return $input;
+  }
+
+  public static function is_closure ($value) {
+    return is_object($value) && ($value instanceof Closure);
+  }
+
   public function log (...$args) {
     $input = [];
 
     foreach ($args as $arg) {
-      if (is_callable($arg)) {
+      if (self::is_closure($arg)) {
         array_push($input, self::buffer($arg));
       } else {
-        array_push($input, $arg);
+        array_push($input, self::serialize($arg));
       }
     }
 

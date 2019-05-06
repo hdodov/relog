@@ -4,7 +4,11 @@ port.onMessage.addListener(function (message) {
   var logs = message.logs
   if (logs) {
     logs.forEach(function (log) {
-      console.log(log.data || log)
+      if (log.type === 'log') {
+        console.log.apply(undefined, log.data)
+      } else {
+        console.log(log.data || log)
+      }
     })
 
     port.postMessage({

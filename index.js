@@ -21,6 +21,10 @@ if (argv.server) {
   })
 } else {
   observer.on('log', log => {
-    console.log(log.data || log)
+    if (log.type === 'log' && Array.isArray(log.data)) {
+      console.log.apply(undefined, log.data)
+    } else {
+      console.log(log.data || log)
+    }
   })
 }
