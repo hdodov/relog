@@ -1,5 +1,4 @@
-const _fs = require('fs')
-const fs = _fs.promises
+const fs = require('fs')
 
 module.exports = class {
   constructor (filename) {
@@ -9,11 +8,15 @@ module.exports = class {
   }
 
   init () {
-    return fs.writeFile(this.filename, '')
+    return new Promise((resolve, reject) => {
+      fs.writeFile(this.filename, '', err => {
+        err ? reject(err) : resolve()
+      })
+    })
   }
 
   watch () {
-    _fs.watch(this.filename, {
+    fs.watch(this.filename, {
       encoding: 'utf-8'
     }, () => {
       this.read()
@@ -39,17 +42,23 @@ module.exports = class {
     return logs
   }
 
-  async read () {
-    var data = await fs.readFile(this.filename, {
-      encoding: 'utf-8'
-    })
+  read () {
+    return new Promise((resolve, reject) => {
+      fs.readFile(this.filename, {
+        encoding: 'utf-8'
+      }, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          var input = data.substr(this.char)
+          var logs = this.parse(input)
+          this.char = data.length
 
-    var input = data.substr(this.char)
-    var logs = this.parse(input)
-    this.char = data.length
-
-    logs.forEach(log => {
-      this.onLog(log)
+          logs.forEach(log => {
+            this.onLog(log)
+          })
+        }
+      })
     })
   }
 }
