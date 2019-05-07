@@ -20,6 +20,8 @@ relog -h
 
 ...and see usage information.
 
+**Note:** On Windows, `relog` might run the Microsoft [`relog`](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/relog) program. In that case, use `node-relog` instead of `relog` to run this program. You can also locate the Microsoft relog program and rename it, so that there's no name conflict, and use `relog`.
+
 ### PHP Setup
 
 To use the logging functions in PHP, you need to modify your _php.ini_ so that the relog PHP loader is included. Find your _php.ini_ and open it. Learn how to find its location [here](https://stackoverflow.com/a/8684638/3130281).
