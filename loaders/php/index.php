@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . DIRECTORY_SEPARATOR . 'Relog.php';
+include __DIR__ . DIRECTORY_SEPARATOR . 'Logger.php';
 
 function relog (...$args) {
   global $relog_logger;

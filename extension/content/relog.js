@@ -33,13 +33,13 @@ function logTrace (data) {
       }
 
       if (frame.method) {
-        output += '%c' + frame.method
+        output += '%c' + frame.method + '%c'
+        args.push('color: #1C00CF;')
+        args.push('')
 
         if (frame.method.match(/^[a-z0-9_]+$/i)) {
           output += '()'
         }
-
-        args.push('color: #1C00CF;')
       }
     }
 
