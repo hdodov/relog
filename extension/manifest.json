@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "1.0.0",
+  "version": "0.1.0",
   "name": "relog",
   "description": "Backend logs in your DevTools console!",
   "permissions": [
