@@ -7,6 +7,10 @@ module.exports = class extends EventEmitter {
 
     this.filename = filename
     this.char = 0
+
+    this.pollTimer = null
+    this.pollRate = 150
+    this.poll()
   }
 
   init () {
@@ -21,8 +25,18 @@ module.exports = class extends EventEmitter {
     fs.watch(this.filename, {
       encoding: 'utf-8'
     }, () => {
+      // Clear timeout before read() to prevent the timer from completing
+      // while reading and causing another read.
+      clearTimeout(this.pollTimer)
       this.read()
     })
+  }
+
+  poll () {
+    clearTimeout(this.pollTimer)
+    this.pollTimer = setTimeout(() => {
+      this.read()
+    }, this.pollRate)
   }
 
   parse (input) {
@@ -49,9 +63,7 @@ module.exports = class extends EventEmitter {
       fs.readFile(this.filename, {
         encoding: 'utf-8'
       }, (err, data) => {
-        if (err) {
-          reject(err)
-        } else {
+        if (!err) {
           var input = data.substr(this.char)
           var logs = this.parse(input)
           this.char = data.length
@@ -59,7 +71,12 @@ module.exports = class extends EventEmitter {
           logs.forEach(log => {
             this.emit('log', log)
           })
+        } else {
+          console.warn(err)
         }
+
+        this.poll()
+        resolve()
       })
     })
   }
