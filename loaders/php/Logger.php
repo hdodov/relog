@@ -37,7 +37,7 @@ class Logger {
 
   private static function sanitizeArrayKeys ($array) {
     foreach ($array as $key => $value) {
-      $parsedKey = preg_replace('/[^A-Za-z0-9_-]/', '', $key);
+      $parsedKey = preg_replace('/[[:^print:]]/', '', $key);
 
       if ($parsedKey !== $key) {
         unset($array[$key]);
