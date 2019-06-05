@@ -33,7 +33,6 @@ socket.on('log', function (log) {
 })
 
 function postLog (log) {
-  console.log('post log',log)
   var index = scriptLogs.indexOf(log)
   if (index >= 0) {
     scriptLogs.splice(index, 1)
