@@ -1,7 +1,7 @@
 {
-  "name": "php-debug",
-  "version": "0.2.3",
-  "description": "PHP logs in Node and the browser console",
+  "name": "relog",
+  "version": "1.0.0",
+  "description": "Streaming of PHP logs and other logfiles to Node and the browser console",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
