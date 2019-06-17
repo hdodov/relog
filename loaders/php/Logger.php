@@ -48,14 +48,17 @@ class Logger {
     return $array;
   }
 
-  private static function serialize ($input, &$blacklist = []) {
+  private static function serialize ($input, $blacklist = []) {
     if (in_array($input, $blacklist)) {
       return '<Cyclic>';
     }
 
-    if (is_object($input)) {
+    if (is_object($input) || is_array($input)) {
       array_push($blacklist, $input);
-      $input = (array)$input;      
+
+      if (is_object($input)) {
+        $input = (array)$input;      
+      }
     }
 
     if (is_array($input)) {
