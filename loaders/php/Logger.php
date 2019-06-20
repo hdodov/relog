@@ -57,7 +57,11 @@ class Logger {
       array_push($blacklist, $input);
 
       if (is_object($input)) {
-        $input = (array)$input;      
+        if (get_class($input) !== 'Closure') {
+          $input = (array)$input;
+        } else {
+          return '<Closure>';
+        }
       }
     }
 
