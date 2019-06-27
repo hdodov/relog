@@ -49,7 +49,7 @@ class Logger {
   }
 
   private static function serialize ($input, $blacklist = []) {
-    if (in_array($input, $blacklist)) {
+    if (in_array($input, $blacklist, true)) {
       return '<Cyclic>';
     }
 
