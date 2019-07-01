@@ -1,31 +1,40 @@
+var VERSION = '1.0.3'
 var socket = io('http://localhost:7904/')
 var scriptLogs = []
 var pendingLogs = []
 var activePort = null
-var activeProcess = null
+var serverInfo = null
 
-socket.on('process_info', function (data) {
-  activeProcess = data
+socket.on('server_info', function (data) {
+  serverInfo = data
 
   postLog({
     id: 'process_connect',
     type: 'info',
-    data: 'Connected to process ' + activeProcess.pid + ' via port ' + socket.io.opts.port
+    data: 'Connected to process ' + serverInfo.pid + ' via port ' + socket.io.opts.port
   })
+
+  if (VERSION !== data.version) {
+    postLog({
+      id: 'version',
+      type: 'info',
+      data: 'VERSION MISMATCH: Extension ' + VERSION + ', CLI ' + data.version
+    })
+  }
 })
 
 socket.on('disconnect', function () {
   postLog({
     id: 'process_disconnect',
     type: 'info',
-    data: 'Disconnected from process ' + activeProcess.pid
+    data: 'Disconnected from process ' + serverInfo.pid
   })
 
-  activeProcess = null
+  serverInfo = null
 })
 
 socket.on('log', function (log) {
-  if (log.script) {
+  if (log.script && log.browser !== false) {
     scriptLogs.push(log)
   } else {
     postLog(log)
