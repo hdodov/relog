@@ -3,10 +3,22 @@ namespace Relog;
 
 class Logger {
   function __construct ($handle) {
+    $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
+    $protocol = $_SERVER['HTTPS'] ?? null;
+    $scheme = $protocol === 'on' ? 'https' : 'http';
+
     $this->handle = $handle;
     $this->id = (string)rand();
+    $this->isBrowser = $userAgent !== null;
 
-    $this->write('init', $_SERVER['SCRIPT_FILENAME']);
+    $filename = $_SERVER['SCRIPT_FILENAME'] ?? 'unknown';
+    $url = $this->isBrowser ? "$scheme://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}" : null;
+
+    $this->write('init', [
+      'filename' => $filename,
+      'url' => $url
+    ]);
+
     header('X-Relog: ' . $this->id);
   }
 
@@ -15,6 +27,7 @@ class Logger {
       'type' => $type,
       'time' => microtime(true),
       'script' => $this->id,
+      'browser' => $this->isBrowser,
       'data' => $input
     ];
 

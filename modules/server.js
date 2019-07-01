@@ -1,3 +1,5 @@
+const package = require('../package.json');
+
 module.exports = function (observer, { port }) {
   var server = require('http').createServer()
   var io = require('socket.io')(server)
@@ -6,9 +8,10 @@ module.exports = function (observer, { port }) {
   })
 
   io.on('connect', socket => {
-    socket.emit('process_info', {
+    socket.emit('server_info', {
       pid: process.pid,
-      cwd: process.cwd()
+      cwd: process.cwd(),
+      version: package.version
     })
   })
 
