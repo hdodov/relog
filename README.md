@@ -53,7 +53,9 @@ To use the logging functions in PHP, you need to modify your _php.ini_ so that t
 
 ## Usage
 
-In your shell, run the logger with:
+### In the Terminal
+
+Open your terminal and run the relog command to start watching for logs:
 
 ```
 relog
@@ -69,7 +71,7 @@ Open that PHP script in your browser and check if the log appears in your shell.
 
 ![Logs in the terminal](docs/gifs/terminal-log.gif)
 
-### DevTools Extension
+### In the Browser
 
 To stream the logs to your Chrome DevTools instead of your shell:
 
