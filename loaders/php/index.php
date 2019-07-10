@@ -1,5 +1,7 @@
 <?php
 
+use Relog\Logger;
+
 include __DIR__ . DIRECTORY_SEPARATOR . 'Logger.php';
 
 function relog (...$args) {
@@ -20,5 +22,5 @@ $relog_file = realpath(__DIR__ . '/../../data/') . DIRECTORY_SEPARATOR . 'php.lo
 $relog_handle = fopen($relog_file, 'a');
 
 if ($relog_handle) {
-  $relog_logger = new Relog\Logger($relog_handle);
+  $relog_logger = new Logger($relog_handle);
 }

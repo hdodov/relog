@@ -4,7 +4,7 @@ namespace Relog;
 class Logger {
   const MAX_DEPTH = 12;
   const MAX_SIZE = 100000;
-  const PRINT_PRIVATE = false;
+  const PRINT_PRIVATE = true;
 
   function __construct ($handle) {
     $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
@@ -35,7 +35,11 @@ class Logger {
       'data' => $input
     ];
 
-    $encodedLog = json_encode($log, JSON_PARTIAL_OUTPUT_ON_ERROR);
+    $encodedLog = json_encode($log,
+      JSON_PARTIAL_OUTPUT_ON_ERROR |
+      JSON_UNESCAPED_UNICODE |
+      JSON_INVALID_UTF8_SUBSTITUTE
+    );
 
     if (!$encodedLog) {
       $log['type'] = 'error';
@@ -77,7 +81,11 @@ class Logger {
 
       if (is_object($input)) {
         if (get_class($input) !== 'Closure') {
-          $input = (array)$input;
+          if (method_exists($input, '__debuginfo')) {
+            $input = $input->__debuginfo();
+          } else {
+            $input = (array)$input;
+          }
         } else {
           return '<Closure>';
         }
@@ -96,13 +104,7 @@ class Logger {
         }
 
         if (!is_object($value) && !is_array($value)) {
-          if (is_string($value)) {
-            $size += strlen($value);
-          } else if (is_float($value)) {
-            $size += 32;
-          } else if (is_int($value)) {
-            $size += PHP_INT_SIZE * 8;
-          }
+          $size += strlen((string)$value); // string length, not logical size
         }
       }
 
