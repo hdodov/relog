@@ -2,6 +2,10 @@
 namespace Relog;
 
 class Logger {
+  const MAX_DEPTH = 12;
+  const MAX_SIZE = 100000;
+  const PRINT_PRIVATE = false;
+
   function __construct ($handle) {
     $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
     $protocol = $_SERVER['HTTPS'] ?? null;
@@ -61,13 +65,15 @@ class Logger {
     return $array;
   }
 
-  private static function serialize ($input, $blacklist = []) {
-    if (in_array($input, $blacklist, true)) {
+  private static function serialize ($input, $stack = [], &$size = 0) {
+    if (in_array($input, $stack, true)) {
       return '<Cyclic>';
+    } else if (count($stack) > self::MAX_DEPTH) {
+      return '<Deep>';
     }
 
     if (is_object($input) || is_array($input)) {
-      array_push($blacklist, $input);
+      array_push($stack, $input);
 
       if (is_object($input)) {
         if (get_class($input) !== 'Closure') {
@@ -80,11 +86,38 @@ class Logger {
 
     if (is_array($input)) {
       $input = self::sanitizeArrayKeys($input);
+      $hasPrivate = false;
 
       foreach ($input as $key => $value) {
-        if (is_object($value) || is_array($value)) {
-          $input[$key] = self::serialize($value, $blacklist);
+        if (self::PRINT_PRIVATE === false && strpos($key, '*') === 0) {
+          $hasPrivate = true;
+          unset($input[$key]);
+          continue;
         }
+
+        if (!is_object($value) && !is_array($value)) {
+          if (is_string($value)) {
+            $size += strlen($value);
+          } else if (is_float($value)) {
+            $size += 32;
+          } else if (is_int($value)) {
+            $size += PHP_INT_SIZE * 8;
+          }
+        }
+      }
+
+      if (count($input) === 0 && $hasPrivate) {
+        return '<Private>'; // array contains only private properties
+      }
+
+      if ($size <= self::MAX_SIZE) {
+        foreach ($input as $key => $value) {
+          if (is_object($value) || is_array($value)) {
+            $input[$key] = self::serialize($value, $stack, $size);
+          }
+        }
+      } else {
+        return '<Large>';
       }
     }
 
